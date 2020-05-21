@@ -55,3 +55,21 @@ $(document).ready(function() {
 });
 
 /********************************************************/
+img or background во весь экран 
+<img class="image_banner_detail" src="<?=$arResult["DETAIL_PICTURE"]["SRC"]?>" >
+<style>
+    .image_banner_detail {
+    width: 100vw;
+    position: relative;
+    margin-left: -50vw;
+    left: 50%;
+    /*margin-bottom: 30px;*/
+    /* background: url(/upload/image.jpg);*/ 
+    /*height: 350px;
+    background-size: cover;
+    background-repeat: no-repeat;*/
+}
+</style>
+ <div class="image_a" style='background: url("<?=$arResult['DETAIL_PICTURE']['SRC']?>"); background-size: cover; background-repeat: no-repeat;'  >
+ </div>
+ 
