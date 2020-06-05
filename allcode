@@ -1,5 +1,6 @@
 /*появление элементов при скролле*/
 <div id="container">
+/********************************/
     
     
     <div>Hello</div>
@@ -55,7 +56,8 @@ $(document).ready(function() {
 });
 
 /********************************************************/
-img or background во весь экран 
+img or background во весь экран
+/*******************************************************/
 <img class="image_banner_detail" src="<?=$arResult["DETAIL_PICTURE"]["SRC"]?>" >
 <style>
     .image_banner_detail {
@@ -73,3 +75,23 @@ img or background во весь экран
  <div class="image_a" style='background: url("<?=$arResult['DETAIL_PICTURE']['SRC']?>"); background-size: cover; background-repeat: no-repeat;'  >
  </div>
  
+/**************************************************/
+выборка подкатегорий по доп.полю(US_)
+/***************************************************/
+<?
+$IBLOCK_ID = 22;
+$arFilter = Array('IBLOCK_ID'=>$IBLOCK_ID, 'GLOBAL_ACTIVE'=>'Y', 'UF_SHOW_MAIN'=> '1');
+$arSort = Array('SORT'=>'ASC', 'ID'=>'DESC');
+$res = CIBlockSection::GetList($arSort, $arFilter, false, Array('UF_SHOW_MAIN*'));
+while ($arResult = $res->GetNext())
+{?>	
+			<div class="main-page-block-item ">
+				<img  alt="<?=$arResult['NAME']?>" src="<?=CFile::GetPath($arResult['PICTURE'])?>"  title="<?=$arResult['NAME']?>">
+				<a href="<?=$arResult['SECTION_PAGE_URL']?>"><?=$arResult['NAME']?></a>		
+			</div>
+		
+<!-- <img src="<?=CFile::GetPath($arResult['PICTURE'])?>" alt=""> echo  CFile::GetPath($arResult['PICTURE']) . $arResult['NAME'].': '.$arResult['ELEMENT_CNT'].' '.$arResult['SECTION_PAGE_URL'].', UF: '.$arResult['~UF_SHOW_MAIN'].'<br>';-->
+ 
+<?}
+?>
+/*****************************************************/
