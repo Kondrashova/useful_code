@@ -95,3 +95,166 @@ while ($arResult = $res->GetNext())
 <?}
 ?>
 /*****************************************************/
+малая кроозина ajax форма 
+<div class="catalog-categoryes__catalog">
+
+<div id="test" class="news-item__list">
+    <ul>
+    <? foreach ($arResult["ITEMS"] as $cell => $arElement): ?>
+            <li>
+                    <div class="item">
+                            <span class="strong">
+                                    Новинка
+                            </span>
+                            <picture>
+                            <a href="<?=$arElement["DETAIL_PAGE_URL"] ?>"><img src="<?= $arElement["PREVIEW_PICTURE"]["SRC"] ?>" alt=""></a>
+                            </picture>
+                            <p class="news-item__name">
+                            <?= $arElement["NAME"] ?>
+                            </p>
+                            
+                            <?foreach($arElement["ITEM_PRICES"] as $code => $arPrice): ?>
+                                
+                                        /**форма*/
+                                      <form action="<?=POST_FORM_ACTION_URI?>" method="post" enctype="multipart/form-data" class="add_form">
+                                        <div class="news-item__amount">
+	                                <a class="MinusList" href="javascript:void(0)" onclick="if (BX('<?echo $arParams["PRODUCT_QUANTITY_VARIABLE"]?><?=$arElement['ID']?>').value &gt; 1) BX('<?echo $arParams["PRODUCT_QUANTITY_VARIABLE"]?><?=$arElement['ID']?>').value--;">-</a> 
+		                        <input type="text" name="<?echo $arParams["PRODUCT_QUANTITY_VARIABLE"]?>" value="1" id="<?echo $arParams["PRODUCT_QUANTITY_VARIABLE"]?><?=$arElement['ID']?>"> 
+	                                <a class="PlusList" href="javascript:void(0)" onclick="BX('<?echo $arParams["PRODUCT_QUANTITY_VARIABLE"]?><?=$arElement['ID']?>').value++;">+</a>	
+                                        </div>
+
+	                                <input type="hidden" name="<?echo $arParams["ACTION_VARIABLE"]?>" value="BUY">
+	                                <input type="hidden" name="<?echo $arParams["PRODUCT_ID_VARIABLE"]?>" value="<?echo $arElement["ID"]?>">
+	                                <input type="submit" name="<?echo $arParams["ACTION_VARIABLE"]."BUY"?>" value="Купить" style="display:none;">
+                                        <div class="news-item__footer">
+                                                        <div class="news-item__price">
+                                                        <span>
+                                                            <?=$arPrice["BASE_PRICE"]?>
+                                                        </span>
+                                                        </div>
+	                                
+                                                <button id="link2card<?=$arElement['ID']?>" style="padding: unset; border: 0" type="submit"><img src="<?=SITE_TEMPLATE_PATH?>/images/icons/basket-catalog.png" alt=""></button>
+                                        </div>
+                                        </form>*/
+					
+					
+					/*ссылка*/
+					 <div class="news-item__amount">
+	                                <a class="MinusList" href="javascript:void(0)" onclick="if (BX('<?echo $arParams["PRODUCT_QUANTITY_VARIABLE"]?><?=$arElement['ID']?>').value &gt; 1) BX('<?echo $arParams["PRODUCT_QUANTITY_VARIABLE"]?><?=$arElement['ID']?>').value--;">-</a> 
+		                        <input type="text" name="<?echo $arParams["PRODUCT_QUANTITY_VARIABLE"]?>" value="1" id="<?echo $arParams["PRODUCT_QUANTITY_VARIABLE"]?><?=$arElement['ID']?>"> 
+	                                <a class="PlusList" href="javascript:void(0)" onclick="BX('<?echo $arParams["PRODUCT_QUANTITY_VARIABLE"]?><?=$arElement['ID']?>').value++;">+</a>	
+                                        </div>
+                                        <div class="news-item__footer">
+                                                        <div class="news-item__price">
+                                                        <span>
+                                                            <?=$arPrice["BASE_PRICE"]?>
+                                                        </span>
+                                                        </div>
+	                                
+                                                <a class="btn_card" href="#" id="<?=$arElement['ID']?>" style="padding: unset; border: 0" ><img src="<?=SITE_TEMPLATE_PATH?>/images/icons/basket-catalog.png" alt=""></a>
+                                        </div>
+
+
+
+                            <?endforeach;?>
+                    </div>
+            </li>
+        <? endforeach; ?>       
+    </ul>
+</div>
+</div>
+</div>
+<div class="popup-fade">
+	<div class="popup">
+		
+		<p style="text-align: center">Добавлено в корзину</p>
+	</div>		
+</div>
+
+<script>
+        $(document).ready(function(){
+		var btn_card = $(".btn_card");
+		var card_content = $("#basket-container");
+		btn_card.on("click", function(e){
+			e.preventDefault();
+			var id = $(this).attr('id');
+                        var quantity = $("#quantity"+id).val();
+                        //console.log(quantity);
+			$.ajax({
+				url: '/ajax/add2basket.php',         /* Куда пойдет запрос */
+				method: 'get',             /* Метод передачи (post или get) */
+				dataType: 'html',          /* Тип данных в ответе (xml, json, script, html). */
+				data: {"id": id, "quantity" : quantity},     /* Параметры передаваемые в запросе. */
+				success: 
+                                function(data){
+                                        //console.log();
+                                        card_content.html(data);   /* функция которая будет выполнена после успешного запроса.  */
+					$('.popup-fade').fadeIn();	
+					$(".popup-fade").fadeOut(1500);        
+					return false;            /* В переменной data содержится ответ от index.php. */
+
+                                        
+				}
+			});
+		});
+		
+	});
+</script>
+/*php  add2basket*/
+<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
+$APPLICATION->RestartBuffer();
+
+
+/*if (CModule::IncludeModule("sale") && CModule::IncludeModule("catalog")) { 
+   
+   if (isset($_POST['id']) && isset($_POST['quantity'])) { 
+      $PRODUCT_ID = intval($_POST['id']);
+      $QUANTITY = intval($_POST['quantity']);
+      Add2BasketByProductID($PRODUCT_ID, $QUANTITY ); 
+   }
+   else {
+	   echo "Нет параметров";  } 
+ } 
+else { echo "Не подключены модули"; }*/
+if (CModule::IncludeModule("sale") && CModule::IncludeModule("catalog")) { 
+   
+	if (isset($_GET['id']) && isset($_GET['quantity'])) { 
+	   $PRODUCT_ID = intval($_GET['id']);
+	   $QUANTITY = intval($_GET['quantity']);
+	   Add2BasketByProductID($PRODUCT_ID, $QUANTITY ); 
+	}
+	else {
+		echo "Нет параметров";  } 
+  } 
+ else { echo "Не подключены модули"; }
+
+ $APPLICATION->IncludeComponent(
+	"bitrix:sale.basket.basket.line", 
+	"basket.line", 
+	array(
+		"COMPONENT_TEMPLATE" => "basket.line",
+		"HIDE_ON_BASKET_PAGES" => "N",
+		"PATH_TO_AUTHORIZE" => "",
+		"PATH_TO_BASKET" => SITE_DIR."personal/cart/",
+		"PATH_TO_ORDER" => SITE_DIR."personal/order/make/",
+		"PATH_TO_PERSONAL" => SITE_DIR."personal/",
+		"PATH_TO_PROFILE" => SITE_DIR."personal/",
+		"PATH_TO_REGISTER" => SITE_DIR."login/",
+		"POSITION_FIXED" => "N",
+		"SHOW_AUTHOR" => "N",
+		"SHOW_EMPTY_VALUES" => "N",
+		"SHOW_NUM_PRODUCTS" => "Y",
+		"SHOW_PERSONAL_LINK" => "N",
+		"SHOW_PRODUCTS" => "N",
+		"SHOW_REGISTRATION" => "N",
+		"SHOW_TOTAL_PRICE" => "Y"
+	),
+	false
+);
+//die();
+
+require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");
+?>
+/*************************************/
+
+
